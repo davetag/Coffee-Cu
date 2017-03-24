@@ -76,15 +76,6 @@ def login():
     else:
         return render_template('login.html', title='Sign in', form=form)
 
-@app.route("/email")
-def email():
-    mail = Mail(app)
-    msg = Message("Coffee at CU",
-                  sender="coffeeatcu@gmail.com",
-                  recipients=["hm2602@barnard.edu"])
-    msg.body = "This is the email body"
-    mail.send(msg)
-    return "Sent"
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
