@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, validators, Form, TextField, TextAreaField, SubmitField, BooleanField, FileField, SelectField
+
 from app import majors
 
 class LoginForm(FlaskForm):
@@ -22,6 +23,9 @@ class ContactForm(Form):
   message = TextAreaField("Message",  [validators.Required("Please enter a message.")])
   submit = SubmitField("Send")
 
+
+class ResetPasswordForm(FlaskForm):
+    email = StringField('email', [validators.Email()])
 
 class ProfileForm(FlaskForm):
     # uni
@@ -54,3 +58,4 @@ class ProfileForm(FlaskForm):
         [validators.DataRequired()])
 
     #def validate_image(form, field):
+
