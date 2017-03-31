@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<h1>{{ user['firstname'] }} {{ user['lastname'] }}</h1>
+
+<h2>{{ profile['year'] }} / {{ profile['school'] }} / {{ profile['major'] }}</h2>
+
+<p>
+<h4>Tell the world a little bit more about yourself.</h4>
+{{ profile['about'] }}
+</p>
+
+<p>
+<h4>What do you like?</h4>
+{{ profile['likes'] }}
+</p>
+
+<p>
+<h4>What are some things people should contact you for?</h4>
+{{ profile['contactfor'] }}
+</p>
+
+<div>
+  <p><strong>Facebook: </strong>{{ profile['facebook'] }}</p>
+  <p><strong>Twitter: </strong>{{ profile['twitter'] }}</p>
+  <p><strong>LinkedIn: </strong>{{ profile['linkedin'] }}</p>
+  <p><strong>Website: </strong>{{ profile['website'] }}</p>
+</div>
+
+{% endblock %}

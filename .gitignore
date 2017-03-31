@@ -12,6 +12,7 @@
 pip-selfcheck.json
 man/
 /venv
+/config
 
 # Secrets / Authentication
 secrets.py

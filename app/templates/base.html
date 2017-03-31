@@ -4,7 +4,8 @@
   </head>
   <body>
     <div><a href="/index">Home</a></div>
-    {% if user %}
+    {% if logged_in %}
+      <div><a href="/edit">Edit your profile</a></div>
       <div><a href="/logout">Logout</a></div>
     {% else %}
       <div><a href="/login">Login</a></div>
@@ -15,7 +16,7 @@
       {% if messages %}
         <ul>
         {% for message in messages %}
-            <li>{{ message }} </li>
+            <li>{{ message }}</li>
         {% endfor %}
         </ul>
       {% endif %}

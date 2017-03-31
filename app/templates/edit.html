@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<h1>Edit Profile</h1>
+{% from "_formhelpers.html" import render_field %}
+<form action="" method="post" name="profile">
+  {{ form.hidden_tag() }}
+  <dl>
+    {{ render_field(form.school) }}
+    {{ render_field(form.year) }}
+    {{ render_field(form.major) }}
+    {{ render_field(form.about) }}
+    {{ render_field(form.likes) }}
+    {{ render_field(form.contactfor) }}
+    {{ render_field(form.twitter) }}
+    {{ render_field(form.facebook) }}
+    {{ render_field(form.linkedin) }}
+    {{ render_field(form.make_public) }}
+  </dl>
+  <p><input type="submit" value="Update">
+</form>
+
+{% endblock %}
