@@ -5,7 +5,6 @@ import os
 import json
 
 app = Flask(__name__)
-mail = Mail(app)
 app.config.from_object('config')
 app.secret_key = os.urandom(24)
 
