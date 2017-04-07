@@ -74,6 +74,7 @@ def login():
     else:
         return render_template('login.html', title='Sign in', form=form, logged_in=False)
 
+
 @app.route('/resetpassword', methods=['GET', 'POST'])
 @not_logged_in
 def reset_password():
@@ -83,33 +84,12 @@ def reset_password():
         return redirect(url_for('login'))
     return render_template('resetpassword.html', title='Reset', form=form)
 
+
 @app.route('/edit', methods=['GET', 'POST'])
 @logged_in
 def edit():
     # TODO prepopulate form with existing profile
     #profile = db.child('profiles').child(session['email']).get(session['idToken']).val()
-
-
-@app.errorhandler(400)
-def bad_request(error):
-    """Handle 400 errors."""
-    return render_template('error/400.html'), 400
-
-@app.errorhandler(401)
-def not_authorized(error):
-    """Handle 401 errors."""
-    return render_template('error/401.html'), 401
-
-@app.errorhandler(403)
-def forbidden(error):
-    """Handle 403 errors."""
-    return render_template('error/403.html'), 403
-
-@app.errorhandler(404)
-def not_found(error):
-    """Handle 404 errors."""
-    return render_template('error/404.html'), 404
-
     form = ProfileForm()
     if form.validate_on_submit():
         new_profile = {
@@ -132,16 +112,6 @@ def not_found(error):
     else:
         return render_template('edit.html', form=form, logged_in=True)
 
-@app.errorhandler(405)
-def method_not_allowed(error):
-    """Handle 405 errors."""
-    return render_template('error/405.html', method=request.method), 405
-
-
-@app.errorhandler(500)
-def internal_server_error(error):
-    """Handle 500 errors."""
-    return render_template('error/500.html'), 500
 
 @app.route('/user/<uid>', methods=['GET'])
 @logged_in # eventually only require login if make_public == false
@@ -157,14 +127,14 @@ def user(uid):
         return render_template('error/400.html', logged_in=True)
 
 
-
 @app.route('/logout')
 @logged_in
 def logout():
     session.pop('idToken', None) # end user session
     session.pop('uid', None)
     return redirect(url_for('index'))
-  
+
+
 # ==========================
 # ===== error handlers =====
 # ==========================
