@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, validators, Form, TextField, TextAreaField, SubmitField, BooleanField, FileField, SelectField
-
+from wtforms import (StringField, PasswordField, validators, Form, TextField,
+    TextAreaField, SubmitField, BooleanField, FileField, SelectField)
 from app import majors
 
 class LoginForm(FlaskForm):
@@ -11,7 +11,11 @@ class LoginForm(FlaskForm):
 class SignupForm(FlaskForm):
     firstname = StringField('First Name', [validators.Length(min=1, max=50)])
     lastname = StringField('Last Name', [validators.Length(min=1, max=50)])
-    email = StringField('Email Address', [validators.Email(), validators.Regexp(r'.+(columbia|barnard)\.edu$', message="Please fill in a Columbia-affiliated email")])
+    email = StringField('Email Address', [
+        validators.Email(), 
+        validators.Regexp(r'.+(columbia|barnard)\.edu$', 
+        message="Please fill in a Columbia-affiliated email")
+    ])
     password = PasswordField('New Password', [
         validators.DataRequired(),
         validators.EqualTo('confirm', message='Passwords must match'),

@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, session, url_for, request
-from requests.exceptions import HTTPError
 from app import app, firebase, db, auth
+from requests.exceptions import HTTPError
 from .forms import LoginForm, SignupForm, ProfileForm, ResetPasswordForm
 from .decorators import logged_in, not_logged_in
 from flask_mail import Mail, Message
@@ -120,8 +120,7 @@ def not_found(error):
             'website': form.website.data,
             'make_public': form.make_public.data
         }
-        db.child('profiles').child(session['uid']).set(new_profile,
-            session['idToken'])
+        db.child('profiles').child(session['uid']).set(new_profile, session['idToken'])
         flash('Profile updated.')
         return redirect('/user/%s' % session['uid'])
     else:
@@ -183,24 +182,24 @@ def user(uid):
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-  mail = Mail(app)
-  form = ContactForm(request.form)
-  if request.method == 'POST':
-      if form.validate() == False:
-        flash('All fields are required.')
+    mail = Mail(app)
+    form = ContactForm(request.form)
+    if request.method == 'POST':
+        if form.validate() == False:
+            flash('All fields are required.')
+            return render_template('contact.html', form=form)
+        else: 
+            msg = Message('Coffee@CU Email', sender='coffeeatcu@gmail.com', recipients=['hm2602@barnard.edu'])
+            msg.body = """
+            New Message from %s %s
+            %s
+            %s
+            """ % ('User firstname', 'User lastname', 'User email', form.message.data)
+            mail.send(msg)
+            flash('Sent')
+            return redirect(url_for('index'))
+    elif request.method == 'GET':
         return render_template('contact.html', form=form)
-      else: 
-        msg = Message('Coffee@CU Email', sender='coffeeatcu@gmail.com', recipients=['hm2602@barnard.edu'])
-        msg.body = """
-        New Message from %s %s
-        %s
-        %s
-        """ % ('User firstname', 'User lastname', 'User email', form.message.data)
-        mail.send(msg)
-        flash('Sent')
-        return redirect(url_for('index'))
-  elif request.method == 'GET':
-      return render_template('contact.html', form=form)
 
 @app.route('/logout')
 @logged_in
