@@ -91,33 +91,6 @@ def reset_password():
 def edit():
     # TODO prepopulate form with existing profile
     #profile = db.child('profiles').child(session['email']).get(session['idToken']).val()
-    form = ProfileForm()
-    if form.validate_on_submit():
-        new_profile = {
-            'school': form.school.data,
-            'year': form.year.data,
-            'major': form.major.data,
-            'about': form.about.data,
-            'likes': form.likes.data,
-            'contactfor': form.contactfor.data,
-            'twitter': form.twitter.data,
-            'facebook': form.facebook.data,
-            'linkedin': form.linkedin.data,
-            'website': form.website.data,
-            'make_public': form.make_public.data
-        }
-        db.child('profiles').child(session['uid']).set(new_profile, session['idToken'])
-        flash('Profile updated.')
-        return redirect('/user/%s' % session['uid'])
-    else:
-        return render_template('edit.html', form=form, logged_in=True)
-
-
-@app.route('/edit', methods=['GET', 'POST'])
-@logged_in
-def edit():
-    # TODO prepopulate form with existing profile
-    #profile = db.child('profiles').child(session['email']).get(session['idToken']).val()
 
     form = ProfileForm()
     if form.validate_on_submit():
