@@ -1,10 +1,12 @@
 from flask import render_template, flash, redirect, session, url_for, request
-from requests.exceptions import HTTPError
 from app import app, firebase, db, auth
-
+from requests.exceptions import HTTPError
 from .forms import LoginForm, SignupForm, ProfileForm, ResetPasswordForm
 from .decorators import logged_in, not_logged_in
+from flask_mail import Mail, Message
+from forms import ContactForm
 
+#app.secret_key = 'this will prevent CSRF attacks' #hidden tag?
 
 @app.route('/')
 @app.route('/index')
@@ -84,12 +86,12 @@ def reset_password():
         return redirect(url_for('login'))
     return render_template('resetpassword.html', title='Reset', form=form)
 
-
 @app.route('/edit', methods=['GET', 'POST'])
 @logged_in
 def edit():
     # TODO prepopulate form with existing profile
     #profile = db.child('profiles').child(session['email']).get(session['idToken']).val()
+
     form = ProfileForm()
     if form.validate_on_submit():
         new_profile = {
@@ -126,6 +128,28 @@ def user(uid):
     except HTTPError:
         return render_template('error/400.html', logged_in=True)
 
+
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    mail = Mail(app)
+    form = ContactForm(request.form)
+    if request.method == 'POST':
+        if form.validate() == False:
+            flash('All fields are required.')
+            return render_template('contact.html', form=form)
+        else: 
+            msg = Message('Coffee@CU Email', sender='coffeeatcu@gmail.com', recipients=['hm2602@barnard.edu'])
+            msg.body = """
+            New Message from %s %s
+            %s
+            %s
+            """ % ('User firstname', 'User lastname', 'User email', form.message.data)
+            mail.send(msg)
+            flash('Sent')
+            return redirect(url_for('index'))
+    elif request.method == 'GET':
+        return render_template('contact.html', form=form)
 
 @app.route('/logout')
 @logged_in
