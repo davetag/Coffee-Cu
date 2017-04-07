@@ -130,26 +130,28 @@ def user(uid):
 
 
 
-@app.route('/contact', methods=['GET', 'POST'])
-def contact():
+@app.route('/contact/<uid>', methods=['GET', 'POST'])
+@logged_in
+def contact(uid):
+    user = db.child('users').child(uid).get(session['idToken']).val()
     mail = Mail(app)
     form = ContactForm(request.form)
     if request.method == 'POST':
         if form.validate() == False:
-            flash('All fields are required.')
-            return render_template('contact.html', form=form)
+            flash(u'Please write a message', 'danger')
+            return render_template('emailwindow.html', form=form)
         else: 
-            msg = Message('Coffee@CU Email', sender='coffeeatcu@gmail.com', recipients=['hm2602@barnard.edu'])
+            msg = Message(subject='Coffee@CU Email', sender='coffeeatcu@gmail.com', recipients=['hm2602@barnard.edu'])
             msg.body = """
             New Message from %s %s
             %s
             %s
-            """ % ('User firstname', 'User lastname', 'User email', form.message.data)
+            """ % (user['firstname'], user['lastname'], user['email'], form.message.data)
             mail.send(msg)
-            flash('Sent')
-            return redirect(url_for('index'))
+            flash(u'Sent','success')
+            return render_template('emailwindow.html', form=ContactForm(request.form))
     elif request.method == 'GET':
-        return render_template('contact.html', form=form)
+        return render_template('emailwindow.html', form=form, uid = uid)
 
 @app.route('/logout')
 @logged_in

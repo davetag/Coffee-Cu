@@ -5,7 +5,7 @@
     <div class="flash">{{ message }}</div>
   {% endfor %}
    
-  <form action="{{ url_for('contact') }}" method=post>
+  <form action="{{ url_for('contact/uid') }}" method=post>
  
     {{ form.message.label }}
     {{ form.message }}
