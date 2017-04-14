@@ -1,10 +1,9 @@
 from flask import render_template, flash, redirect, session, url_for, request
-from app import app, firebase, db, auth
+from app import app, firebase, db, auth, mail
 from requests.exceptions import HTTPError
-from .forms import LoginForm, SignupForm, ProfileForm, ResetPasswordForm
+from .forms import LoginForm, SignupForm, ProfileForm, ResetPasswordForm, ContactForm
 from .decorators import logged_in, not_logged_in
 from flask_mail import Mail, Message
-from forms import ContactForm
 
 #app.secret_key = 'this will prevent CSRF attacks' #hidden tag?
 
@@ -115,43 +114,35 @@ def edit():
         return render_template('edit.html', form=form, logged_in=True)
 
 
-@app.route('/user/<uid>', methods=['GET'])
+@app.route('/user/<uid>', methods=['GET', 'POST'])
 @logged_in # eventually only require login if make_public == false
 def user(uid):
     try:
         user = db.child('users').child(uid).get(session['idToken']).val()
+        mail = Mail(app)
         profile = db.child('profiles').child(uid).get(session['idToken']).val()
+        print profile
+        form = ContactForm(request.form)
         if user is None or profile is None:
             return render_template('error/404.html', logged_in=True)
-        else:
-            return render_template('user.html', user=user, profile=profile, logged_in=True)
+        if request.method == 'GET':
+            return render_template('user.html', user=user, profile=profile, logged_in=True, form = form)
+        elif request.method == 'POST':
+            if form.validate() == False:
+                flash(u'Please write a message', 'danger')
+                return render_template('user.html', user=user, profile=profile, logged_in=True, form = form)
+            else: 
+                msg = Message(subject='Coffee@CU Email', sender='coffeeatcu@gmail.com', recipients=['hm2602@barnard.edu'])
+                msg.body = """
+                New Message from %s %s
+                %s
+                %s
+                """ % (user['firstname'], user['lastname'], user['email'], form.message.data)
+                mail.send(msg)
+                flash(u'Sent','success')
+                return render_template('user.html', user=user, profile=profile, logged_in=True, form=ContactForm())
     except HTTPError:
         return render_template('error/400.html', logged_in=True)
-
-
-
-@app.route('/contact/<uid>', methods=['GET', 'POST'])
-@logged_in
-def contact(uid):
-    user = db.child('users').child(uid).get(session['idToken']).val()
-    mail = Mail(app)
-    form = ContactForm(request.form)
-    if request.method == 'POST':
-        if form.validate() == False:
-            flash(u'Please write a message', 'danger')
-            return render_template('emailwindow.html', form=form)
-        else: 
-            msg = Message(subject='Coffee@CU Email', sender='coffeeatcu@gmail.com', recipients=['hm2602@barnard.edu'])
-            msg.body = """
-            New Message from %s %s
-            %s
-            %s
-            """ % (user['firstname'], user['lastname'], user['email'], form.message.data)
-            mail.send(msg)
-            flash(u'Sent','success')
-            return render_template('emailwindow.html', form=ContactForm(request.form))
-    elif request.method == 'GET':
-        return render_template('emailwindow.html', form=form, uid = uid)
 
 @app.route('/logout')
 @logged_in
