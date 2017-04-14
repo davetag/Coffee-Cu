@@ -1,5 +1,5 @@
 from flask import flash, redirect, render_template, request, session, url_for
-from app import app, auth, db, firebase
+from app import app, auth, db, firebase, mail
 from requests.exceptions import HTTPError
 from .forms import ContactForm, LoginForm, ProfileForm, ResetPasswordForm, SignupForm
 from .decorators import logged_in, not_logged_in
@@ -130,7 +130,6 @@ def user(uid):
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    mail = Mail(app)
     form = ContactForm(request.form)
     if request.method == 'POST':
         if form.validate() == False:
