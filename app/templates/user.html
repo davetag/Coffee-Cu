@@ -1,3 +1,25 @@
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/css/bootstrap-dialog.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/js/bootstrap-dialog.min.js"></script>
+<head>
+<style>
+.modal-body .form-horizontal .col-sm-2,
+.modal-body .form-horizontal .col-sm-10 {
+    width: 100%
+}
+
+.modal-body .form-horizontal .control-label {
+    text-align: left;
+}
+.modal-body .form-horizontal .col-sm-offset-2 {
+    margin-left: 15px;
+}
+.alert { width: 300px; }
+
+</style>
+</head>
 {% extends "base.html" %}
 
 {% block body %}
@@ -27,5 +49,51 @@
   <p><strong>LinkedIn: </strong>{{ profile['linkedin'] }}</p>
   <p><strong>Website: </strong>{{ profile['website'] }}</p>
 </div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible" role="alert" >
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+<!-- Button trigger modal -->
+<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#messageBox">
+    Send a message
+</button>
 
-{% endblock %}
+<!-- Modal -->
+<div class="modal fade" id="messageBox" tabindex="-1" role="dialog" 
+     aria-labelledby="messageBox" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                       <span aria-hidden="true">&times;</span>
+                       <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="messageBoxTitle">
+                    Write message below
+                </h4>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form action="{{ url_for('user', uid = user['uid']) }}" method=post>
+ 
+                      {{ form.message.label }}
+                      {{ form.message }} 
+                      {{ form.submit }}
+                                 
+                </form>
+                {% endblock %}  
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+

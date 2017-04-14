@@ -1,11 +1,10 @@
-from flask import render_template, flash, redirect, session, url_for, request
-from app import app, firebase, db, auth, mail
+from flask import flash, redirect, render_template, request, session, url_for
+from app import app, auth, db, firebase, mail
 from requests.exceptions import HTTPError
-from .forms import LoginForm, SignupForm, ProfileForm, ResetPasswordForm, ContactForm
+from .forms import ContactForm, LoginForm, ProfileForm, ResetPasswordForm, SignupForm
 from .decorators import logged_in, not_logged_in
 from flask_mail import Mail, Message
 
-#app.secret_key = 'this will prevent CSRF attacks' #hidden tag?
 
 @app.route('/')
 @app.route('/index')
@@ -84,6 +83,7 @@ def reset_password():
         auth.send_password_reset_email(form.email.data)
         return redirect(url_for('login'))
     return render_template('resetpassword.html', title='Reset', form=form)
+
 
 @app.route('/edit', methods=['GET', 'POST'])
 @logged_in
