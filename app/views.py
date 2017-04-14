@@ -121,11 +121,8 @@ def user(uid):
         viewed_user = db.child('users').child(uid).get(session['idToken']).val()
         mail = Mail(app)
         profile = db.child('profiles').child(uid).get(session['idToken']).val()
-        print profile
         form = ContactForm(request.form)
         user = db.child('users').child(session['uid']).get(session['idToken']).val()
-        print 
-        print viewed_user
         if user is None or profile is None:
             return render_template('error/404.html', logged_in=True)
         if request.method == 'GET':
