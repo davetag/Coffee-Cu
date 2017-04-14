@@ -57,7 +57,7 @@ def login():
             user = auth.sign_in_with_email_and_password(form.email.data,
                 form.password.data)
             accountInfo = auth.get_account_info(user['idToken'])
-
+            print accountInfo
             if (not accountInfo['users'][0]['emailVerified']):
                 flash('Please verify your email address!')
             else:
@@ -118,29 +118,32 @@ def edit():
 @logged_in # eventually only require login if make_public == false
 def user(uid):
     try:
-        user = db.child('users').child(uid).get(session['idToken']).val()
+        viewed_user = db.child('users').child(uid).get(session['idToken']).val()
         mail = Mail(app)
         profile = db.child('profiles').child(uid).get(session['idToken']).val()
         print profile
         form = ContactForm(request.form)
+        user = db.child('users').child(session['uid']).get(session['idToken']).val()
+        print 
+        print viewed_user
         if user is None or profile is None:
             return render_template('error/404.html', logged_in=True)
         if request.method == 'GET':
-            return render_template('user.html', user=user, profile=profile, logged_in=True, form = form)
+            return render_template('user.html', viewed_user=viewed_user, profile=profile, logged_in=True, form = form, user= user)
         elif request.method == 'POST':
             if form.validate() == False:
                 flash(u'Please write a message', 'danger')
-                return render_template('user.html', user=user, profile=profile, logged_in=True, form = form)
+                return render_template('user.html', viewed_user=viewed_user, profile=profile, logged_in=True, form = form, user= user)
             else: 
-                msg = Message(subject='Coffee@CU Email', sender='coffeeatcu@gmail.com', recipients=['hm2602@barnard.edu'])
+                msg = Message(subject='Coffee@CU Email', sender='coffeeatcu@gmail.com', recipients=[viewed_user['email']])
                 msg.body = """
                 New Message from %s %s
                 %s
                 %s
                 """ % (user['firstname'], user['lastname'], user['email'], form.message.data)
                 mail.send(msg)
-                flash(u'Sent','success')
-                return render_template('user.html', user=user, profile=profile, logged_in=True, form=ContactForm())
+                flash(u'Sent here','success')
+                return render_template('user.html', viewed_user=viewed_user, profile=profile, logged_in=True, form = form, user= user)
     except HTTPError:
         return render_template('error/400.html', logged_in=True)
 
