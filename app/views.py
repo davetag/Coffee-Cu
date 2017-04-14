@@ -57,7 +57,6 @@ def login():
             user = auth.sign_in_with_email_and_password(form.email.data,
                 form.password.data)
             accountInfo = auth.get_account_info(user['idToken'])
-            print accountInfo
             if (not accountInfo['users'][0]['emailVerified']):
                 flash('Please verify your email address!')
             else:
