@@ -1,12 +1,10 @@
-from flask import render_template, flash, redirect, session, url_for, request
-from app import app, firebase, db, auth, mail
+from flask import flash, redirect, render_template, request, session, url_for
+from app import app, auth, db, firebase, mail
 from requests.exceptions import HTTPError
-from .forms import LoginForm, SignupForm, ProfileForm, ResetPasswordForm
+from .forms import ContactForm, LoginForm, ProfileForm, ResetPasswordForm, SignupForm
 from .decorators import logged_in, not_logged_in
 from flask_mail import Mail, Message
-from forms import ContactForm
 
-#app.secret_key = 'this will prevent CSRF attacks' #hidden tag?
 
 @app.route('/')
 @app.route('/index')
@@ -86,6 +84,7 @@ def reset_password():
         return redirect(url_for('login'))
     return render_template('resetpassword.html', title='Reset', form=form)
 
+
 @app.route('/edit', methods=['GET', 'POST'])
 @logged_in
 def edit():
@@ -129,7 +128,6 @@ def user(uid):
         return render_template('error/400.html', logged_in=True)
 
 
-
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     form = ContactForm(request.form)
@@ -137,7 +135,7 @@ def contact():
         if form.validate() == False:
             flash('All fields are required.')
             return render_template('contact.html', form=form)
-        else: 
+        else:
             msg = Message('Coffee@CU Email', sender='coffeeatcu@gmail.com', recipients=['hm2602@barnard.edu'])
             msg.body = """
             New Message from %s %s
@@ -149,6 +147,7 @@ def contact():
             return redirect(url_for('index'))
     elif request.method == 'GET':
         return render_template('contact.html', form=form)
+
 
 @app.route('/logout')
 @logged_in
