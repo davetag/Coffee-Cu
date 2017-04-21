@@ -11,3 +11,4 @@ itsdangerous==0.24
 requests==2.2.1
 six==1.10.0
 pyrebase==3.0.27
+Flask-Mail==0.9.1
