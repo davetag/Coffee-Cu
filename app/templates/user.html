@@ -42,20 +42,13 @@
 {{ profile['contactfor'] }}
 </p>
 
-<div>
-  <p><strong>Facebook: </strong>{{ profile['facebook'] }}</p>
-  <p><strong>Twitter: </strong>{{ profile['twitter'] }}</p>
-  <p><strong>LinkedIn: </strong>{{ profile['linkedin'] }}</p>
-  <p><strong>Website: </strong>{{ profile['website'] }}</p>
-</div>
-  
 <!-- Button trigger modal -->
 <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#messageBox">
     Send a message
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="messageBox" tabindex="-1" role="dialog" 
+<div class="modal fade" id="messageBox" tabindex="-1" role="dialog"
      aria-labelledby="messageBox" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -69,21 +62,19 @@
                     Write message below
                 </h4>
             </div>
-            
+
             <!-- Modal Body -->
             <div class="modal-body">
                 <form action="{{ url_for('user', uid = viewed_user['uid']) }}" method=post>
- 
+
                       {{ form.message.label }}
-                      {{ form.message }} 
+                      {{ form.message }}
                       {{ form.submit }}
-                                 
+
                 </form>
-                {% endblock %}  
+                {% endblock %}
             </div>
-            
+
         </div>
     </div>
 </div>
-
-

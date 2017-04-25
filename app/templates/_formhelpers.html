@@ -10,3 +10,10 @@
   {% endif %}
   </dd>
 {% endmacro %}
+
+{% macro render_profile_tile(user, profile) %}
+  <div class="user-container" style="border-style: solid">
+    <strong>{{ user['firstname'] }} {{ user['lastname'] }}</strong>
+    {{ profile['year'] }} / {{ profile['school'] }} / {{ profile['major'] }}
+  </div>
+{% endmacro %}
