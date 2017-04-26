@@ -11,9 +11,12 @@
   </dd>
 {% endmacro %}
 
-{% macro render_profile_tile(user, profile) %}
-  <div class="user-container" style="border-style: solid">
+{% macro render_tile(user, profile) %}
+  <div>
     <strong>{{ user['firstname'] }} {{ user['lastname'] }}</strong>
+    <br/>
     {{ profile['year'] }} / {{ profile['school'] }} / {{ profile['major'] }}
+    <br/>
+    <a href="/user/{{ user['uid'] }}">Go</a>
   </div>
 {% endmacro %}

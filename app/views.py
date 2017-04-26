@@ -1,11 +1,11 @@
 from flask import flash, redirect, render_template, request, session, url_for
 from app import app, auth, db, firebase, mail
-from requests.exceptions import HTTPError
 from .forms import (ContactForm, LoginForm, ProfileForm, ResetPasswordForm,
     SignupForm)
 from .decorators import logged_in, not_logged_in
 from .dbhelpers import (create_new_user, sign_in_user, is_verified,
-    uid_from_id_token, get_profile, set_profile, get_userdata)
+    uid_from_id_token, get_profile, set_profile, get_userdata,
+    get_user_profile_pairs)
 from .mailhelpers import send_contact_email
 
 
@@ -13,11 +13,8 @@ from .mailhelpers import send_contact_email
 @app.route('/index')
 def index():
     if 'idToken' in session:
-        # collect all users
-
-        # collect all profiles
-
-        return render_template('index.html', logged_in=True)
+        pairs = get_user_profile_pairs();
+        return render_template('index.html', logged_in=True, pairs=pairs)
     else:
         return render_template('index.html', logged_in=False)
 

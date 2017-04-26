@@ -3,9 +3,13 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
+{% from "_formhelpers.html" import render_tile %}
     {% if logged_in %}
       <h1>You're logged in!</h1>
-
+      {% for pair in pairs %}
+        {{ render_tile(pair[0], pair[1]) }}
+        <br/>
+      {% endfor %}
     {% else %}
       <h1>You're not logged in.</h1>
     {% endif %}
