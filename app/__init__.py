@@ -14,6 +14,7 @@ with open('config/databaseConfig.json', 'r') as database_config:
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 db = firebase.database()
+storage = firebase.storage()
 
 with open('config/emailConfig.json', 'r') as email:
     email_config = json.load(email)

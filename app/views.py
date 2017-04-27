@@ -1,11 +1,11 @@
 from flask import flash, redirect, render_template, request, session, url_for
-from app import app, auth, db, firebase, mail
+from app import app
 from .forms import (ContactForm, LoginForm, ProfileForm, ResetPasswordForm,
     SignupForm)
 from .decorators import logged_in, not_logged_in
 from .dbhelpers import (create_new_user, sign_in_user, is_verified,
     uid_from_id_token, get_profile, set_profile, get_userdata,
-    get_user_profile_pairs)
+    get_user_profile_pairs, get_user_photo_url, set_user_photo)
 from .mailhelpers import send_contact_email
 
 
@@ -80,10 +80,20 @@ def edit():
         form = ProfileForm(school=profile['school'], year=profile['year'],
             major=profile['major'], about=profile['about'],
             likes=profile['likes'], contactfor=profile['contactfor'])
+        # TODO retrieve the existing profile picture and pass it in for display
+        photo = get_user_photo_url(session['uid'], session['idToken'])
     else:
         form = ProfileForm()
 
     if form.validate_on_submit():
+        # handle photo upload
+        if form.photo.data:
+            try:
+                set_user_photo(form.photo.data)
+            except TypeError:
+                flash('Profile photo upload failed.')
+
+        # create new profile
         new_profile = {
             'school': form.school.data,
             'year': form.year.data,
@@ -98,7 +108,8 @@ def edit():
         flash('Profile updated.')
         return redirect('/user/%s' % session['uid'])
     else:
-        return render_template('edit.html', form=form, logged_in=True)
+        return render_template('edit.html', form=form, logged_in=True,
+            photo_url=get_user_photo_url(session['uid'], session['idToken']))
 
 
 @app.route('/user/<uid>', methods=['GET', 'POST'])
@@ -113,6 +124,7 @@ def user(uid):
             return render_template('error/404.html', logged_in=True)
 
         form = ContactForm(request.form)
+        # POST --> send email
         if request.method == 'POST':
             user = get_userdata(session['uid'])
             if form.validate():
@@ -121,10 +133,11 @@ def user(uid):
                 flash('Sent message to %s!' % viewed_user['firstname'])
             else:
                 flash('Please write a message')
-
-        # in all other cases, just display
-        return render_template('user.html', viewed_user=viewed_user,
-            profile=profile, logged_in=True, form=form)
+        else:
+            # in all other cases, just display
+            photo_url=get_user_photo_url(uid, session['idToken'])
+            return render_template('user.html', viewed_user=viewed_user,
+                profile=profile, logged_in=True, form=form, photo_url=photo_url)
     except HTTPError:
         return render_template('error/400.html', logged_in=True)
 

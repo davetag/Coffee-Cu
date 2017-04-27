@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileRequired, FileAllowed, FileField
 from wtforms import (StringField, PasswordField, validators, Form, TextField,
-    TextAreaField, SubmitField, BooleanField, FileField, SelectField)
+    TextAreaField, SubmitField, BooleanField, SelectField)
 from app import majors
 
 
@@ -35,6 +36,9 @@ class ResetPasswordForm(FlaskForm):
 
 
 class ProfileForm(FlaskForm):
+    photo = FileField('Profile picture', validators=[
+            FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')
+        ])
     school = SelectField('School', choices=[
             ('cc', 'Columbia College'),
             ('seas', 'Columbia Engineering'),

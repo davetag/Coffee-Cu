@@ -3,10 +3,19 @@
 {% block body %}
 
 <h1>Edit Profile</h1>
+
+<strong>Your current profile picture:</strong>
+{% if photo_url %}
+  <img src="{{ photo_url }}"/>
+{% else %}
+  <img src="http://placekitten.com/g/200/200"/>
+{% endif %}
+
 {% from "_formhelpers.html" import render_field %}
-<form action="" method="post" name="profile">
+<form action="" method="post" name="profile" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
   <dl>
+    {{ render_field(form.photo) }}
     {{ render_field(form.school) }}
     {{ render_field(form.year) }}
     {{ render_field(form.major) }}

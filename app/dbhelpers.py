@@ -1,5 +1,7 @@
-from app import auth, db, firebase
+from app import auth, db, firebase, storage
 from requests.exceptions import HTTPError
+from werkzeug.utils import secure_filename
+import os
 
 
 def create_new_user(email, password, firstname, lastname):
@@ -61,3 +63,15 @@ def get_user_profile_pairs():
         if user.val()['enabled'] and profile:
             pairs.append((user.val(), profile))
     return pairs
+
+
+def get_user_photo_url(uid, id_token):
+    return storage.child('profile_pictures/%s' % uid).get_url(id_token)
+
+
+def set_user_photo(uid, photo_data):
+    # TODO catch errors
+    filename = os.path.join(app.root_path, secure_filename(photo_data.filename))
+    photo_data.save(filename)
+    storage.child('profile_pictures/%s' % uid).put(filename)
+    os.remove(filename)
