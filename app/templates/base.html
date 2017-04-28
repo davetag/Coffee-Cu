@@ -101,11 +101,10 @@
                  </div>
 							 </form>
               <ul class="nav navbar-nav navbar-right">
-
-                    <li><a href="/signup">Sign up</a></li>
 										{% if logged_in %}
                     	<li><button onClick="location.href='/logout'" class="btn btn-round btn-default">Logout</button></li>
 										{% else %}
+											<li><a href="/signup">Sign up</a></li>
 											<li><button onClick="location.href='/login'" class="btn btn-round btn-default">Login</button></li>
 										{% endif %}
                </ul>

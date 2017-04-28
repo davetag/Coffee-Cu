@@ -4,31 +4,46 @@
 
 {% block body %}
 <div class="container">
-<h1>Edit Profile</h1>
-
+<h1 class="text-center">Edit Profile</h1>
+<div class="col-md-4 col-md-offset-4  text-center">
 {% if photo_url %}
+
   <strong>Your current profile picture:</strong>
   <img src="{{ photo_url }}" width="200px" height="200px"/>
 {% else %}
   <strong>No profile picture uploaded yet!</strong>
 {% endif %}
-
+</div>
 {% from "_formhelpers.html" import render_field %}
 
 <form action="" method="post" name="profile" enctype="multipart/form-data" class="col-md-8">
   {{ form.hidden_tag() }}
   <div class = "container text-center" style="padding-top:10%">
-    {{ render_field(form.photo, class="form-control col-md-4") }}
     <div class="col-md-4 col-md-offset-4  text-center">
-      {{ form.school (class="form-control")}}<br>
+      {{ form.photo (class="form-control")}}
     </div>
-    {{ render_field(form.year, class="form-control col-md-4") }}
-    {{ render_field(form.major, class="form-control") }}
-    {{ render_field(form.about, class="form-control") }}
-    {{ render_field(form.likes, class="form-control") }}
-    {{ render_field(form.contactfor, class="form-control")  }}
-
-    <input type="submit" value="Update" class="btn btn-block btn-lg btn-info btn-fill">
+    <div class="col-md-4 col-md-offset-4  text-center">
+      {{ form.school (class="form-control")}}
+    </div>
+    <div class="col-md-4 col-md-offset-4  text-center">
+      {{ form.year (class="form-control")}}
+    </div>
+    <div class="col-md-4 col-md-offset-4  text-center">
+      {{ form.major (class="form-control")}}
+    </div>
+    <div class="col-md-4 col-md-offset-4  text-center">
+      {{ form.about (class="form-control", placeholder="Tell the world a little bit more about yourself.")}}
+    </div>
+    <div class="col-md-4 col-md-offset-4  text-center">
+      {{ form.likes (class="form-control", placeholder="What do you like?")}}
+    </div>
+    <div class="col-md-4 col-md-offset-4  text-center">
+      {{ form.contactfor (class="form-control", placeholder="What should people contact you for?")}}
+    </div>
+    <!--<input type="submit" value="Update" class="btn btn-block btn-lg btn-info btn-fill">-->
+    <div class="col-md-4 col-md-offset-4  text-center">
+       <button class="btn btn-block btn-lg btn-info btn-fill" type="submit" value="Update">Update</button>
+    </div>
   </div>
 </form>
 </div>

@@ -1,4 +1,4 @@
-from app import auth, db, firebase, storage
+from app import app, auth, db, firebase, storage
 from requests.exceptions import HTTPError
 from werkzeug.utils import secure_filename
 import os
