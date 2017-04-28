@@ -1,16 +1,20 @@
 from flask import flash, redirect, render_template, request, session, url_for
-from app import app, auth, db, firebase, mail
-from requests.exceptions import HTTPError
-from .forms import ContactForm, LoginForm, ProfileForm, ResetPasswordForm, SignupForm
+from app import app
+from .forms import (ContactForm, LoginForm, ProfileForm, ResetPasswordForm,
+    SignupForm)
 from .decorators import logged_in, not_logged_in
-from flask_mail import Mail, Message
+from .dbhelpers import (create_new_user, sign_in_user, is_verified,
+    uid_from_id_token, get_profile, set_profile, get_userdata,
+    get_user_profile_pairs, get_user_photo_url, set_user_photo)
+from .mailhelpers import send_contact_email
 
 
 @app.route('/')
 @app.route('/index')
 def index():
     if 'idToken' in session:
-        return render_template('index.html', logged_in=True)
+        pairs = get_user_profile_pairs();
+        return render_template('index.html', logged_in=True, pairs=pairs)
     else:
         return render_template('index.html', logged_in=False)
 
@@ -20,29 +24,16 @@ def index():
 def signup():
     form = SignupForm()
     if form.validate_on_submit():
-        try:
-            user = auth.create_user_with_email_and_password(form.email.data,
-                form.password.data)
-            auth.send_email_verification(user['idToken'])
+        email = form.email.data
+        password = form.password.data
+        firstname = form.firstname.data
+        lastname = form.lastname.data
 
-            uid = user['localId']
-
-            userdata = {
-                'uid': uid,
-                'firstname': form.firstname.data,
-                'lastname': form.lastname.data,
-                'email': form.email.data,
-                'enabled': True
-            }
-            db.child('users').child(uid).set(userdata, user['idToken'])
-
+        if create_new_user(email, password, firstname, lastname):
             flash('Thanks for signing up! Please verify your email to log in.')
             return redirect(url_for('login'))
-        except HTTPError as e:
-            # TODO more accurate error reporting -- pyrebase problem?
-            #flash('An account already exists for that email address!')
-            flash('Account creation failed.')
-            print(e)
+        else:
+            flash('An account already exists for that email address!')
             return redirect(url_for('signup'))
     else:
         return render_template('signup.html', form=form, logged_in=False)
@@ -53,22 +44,15 @@ def signup():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        try:
-            user = auth.sign_in_with_email_and_password(form.email.data,
-                form.password.data)
-            accountInfo = auth.get_account_info(user['idToken'])
-            if (not accountInfo['users'][0]['emailVerified']):
-                flash('Please verify your email address!')
+        id_token = sign_in_user(form.email.data, form.password.data)
+        if id_token is not None:
+            if is_verified(id_token):
+                session['idToken'] = id_token
+                session['uid'] = uid_from_id_token(id_token)
             else:
-                # create new user session
-                session['idToken'] = user['idToken']
-                uid = accountInfo['users'][0]['localId']
-                session['uid'] = uid
-                flash('Login complete for uid="%s"' % uid)
-        except HTTPError as e:
+                flash('Please verify your email address!')
+        else:
             flash('Sorry, we couldn\'t find those credentials!')
-            print(e)
-
         return redirect(url_for('index'))
     else:
         return render_template('login.html', title='Sign in', form=form, logged_in=False)
@@ -87,59 +71,73 @@ def reset_password():
 @app.route('/edit', methods=['GET', 'POST'])
 @logged_in
 def edit():
-    # TODO prepopulate form with existing profile
-    #profile = db.child('profiles').child(session['email']).get(session['idToken']).val()
+    profile = get_profile(session['uid'])
 
-    form = ProfileForm()
+    # if user already made a profile, populate form with the information
+    form = None
+    if profile is not None:
+        # TODO is there a clean way to do this?  can't pass in a dict...
+        form = ProfileForm(school=profile['school'], year=profile['year'],
+            major=profile['major'], about=profile['about'],
+            likes=profile['likes'], contactfor=profile['contactfor'])
+        # TODO retrieve the existing profile picture and pass it in for display
+        photo = get_user_photo_url(session['uid'], session['idToken'])
+    else:
+        form = ProfileForm()
+
     if form.validate_on_submit():
+        # handle photo upload
+        if form.photo.data:
+            try:
+                set_user_photo(form.photo.data)
+            except TypeError:
+                flash('Profile photo upload failed.')
+
+        # create new profile
         new_profile = {
             'school': form.school.data,
             'year': form.year.data,
             'major': form.major.data,
             'about': form.about.data,
             'likes': form.likes.data,
-            'contactfor': form.contactfor.data,
-            'twitter': form.twitter.data,
-            'facebook': form.facebook.data,
-            'linkedin': form.linkedin.data,
-            'website': form.website.data,
-            'make_public': form.make_public.data
+            'contactfor': form.contactfor.data
         }
-        db.child('profiles').child(session['uid']).set(new_profile,
-            session['idToken'])
+        # TODO eventually add new profile to queue of pending profiles
+        # instead of immediately updating with no moderator approval
+        set_profile(session['uid'], new_profile)
         flash('Profile updated.')
         return redirect('/user/%s' % session['uid'])
     else:
-        return render_template('edit.html', form=form, logged_in=True)
+        return render_template('edit.html', form=form, logged_in=True,
+            photo_url=get_user_photo_url(session['uid'], session['idToken']))
 
 
 @app.route('/user/<uid>', methods=['GET', 'POST'])
 @logged_in # eventually only require login if make_public == false
 def user(uid):
     try:
-        viewed_user = db.child('users').child(uid).get(session['idToken']).val()
-        mail = Mail(app)
-        profile = db.child('profiles').child(uid).get(session['idToken']).val()
-        form = ContactForm(request.form)
-        user = db.child('users').child(session['uid']).get(session['idToken']).val()
-        if user is None or profile is None:
+        # get info for user to display, 404 if not found
+        viewed_user = get_userdata(uid)
+        profile = get_profile(uid)
+
+        if viewed_user is None or profile is None:
             return render_template('error/404.html', logged_in=True)
-        if request.method == 'GET':
-            return render_template('user.html', viewed_user=viewed_user, profile=profile, logged_in=True, form = form, user= user)
-        elif request.method == 'POST':
-            if form.validate() == False:
-                flash(u'Please write a message', 'danger')
-                return render_template('user.html', viewed_user=viewed_user, profile=profile, logged_in=True, form = form, user= user)
-            else: 
-                msg = Message(subject='Coffee@CU Email', sender='coffeeatcu@gmail.com', recipients=[viewed_user['email']])
-                msg.body = """
-                New Message from %s %s
-                %s
-                %s
-                """ % (user['firstname'], user['lastname'], user['email'], form.message.data)
-                mail.send(msg)
-                flash(u'Sent here','success')
-                return render_template('user.html', viewed_user=viewed_user, profile=profile, logged_in=True, form = form, user= user)
+
+        form = ContactForm(request.form)
+        # POST --> send email
+        if request.method == 'POST':
+            user = get_userdata(session['uid'])
+            if form.validate():
+                send_contact_email(viewed_user['email'], user['firstname'],
+                    user['lastname'], form.message.data)
+                flash('Sent message to %s!' % viewed_user['firstname'])
+            else:
+                flash('Please write a message')
+        else:
+            # in all other cases, just display
+            photo_url=get_user_photo_url(uid, session['idToken'])
+            return render_template('user.html', viewed_user=viewed_user,
+                profile=profile, logged_in=True, form=form, photo_url=photo_url)
     except HTTPError:
         return render_template('error/400.html', logged_in=True)
 

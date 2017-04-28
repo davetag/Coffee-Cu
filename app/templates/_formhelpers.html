@@ -10,3 +10,13 @@
   {% endif %}
   </dd>
 {% endmacro %}
+
+{% macro render_tile(user, profile) %}
+  <div>
+    <strong>{{ user['firstname'] }} {{ user['lastname'] }}</strong>
+    <br/>
+    {{ profile['year'] }} / {{ profile['school'] }} / {{ profile['major'] }}
+    <br/>
+    <a href="/user/{{ user['uid'] }}">Go</a>
+  </div>
+{% endmacro %}
