@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
-{% block body %}
+{% block title %}Edit your profile{% endblock %}
 
+{% block body %}
+<div class="container">
 <h1>Edit Profile</h1>
 
 <strong>Your current profile picture:</strong>
@@ -12,18 +14,19 @@
 {% endif %}
 
 {% from "_formhelpers.html" import render_field %}
-<form action="" method="post" name="profile" enctype="multipart/form-data">
-  {{ form.hidden_tag() }}
-  <dl>
-    {{ render_field(form.photo) }}
-    {{ render_field(form.school) }}
-    {{ render_field(form.year) }}
-    {{ render_field(form.major) }}
-    {{ render_field(form.about) }}
-    {{ render_field(form.likes) }}
-    {{ render_field(form.contactfor) }}
-  </dl>
-  <p><input type="submit" value="Update">
-</form>
 
+<form action="" method="post" name="profile" enctype="multipart/form-data" class="col-md-8">
+  {{ form.hidden_tag() }}
+
+    {{ render_field(form.photo, class="form-control col-md-4") }}
+    {{ render_field(form.school, class="form-control col-md-4") }}
+    {{ render_field(form.year, class="form-control col-md-4") }}
+    {{ render_field(form.major, class="form-control") }}
+    {{ render_field(form.about, class="form-control") }}
+    {{ render_field(form.likes, class="form-control") }}
+    {{ render_field(form.contactfor, class="form-control")  }}
+
+  <input type="submit" value="Update" class="btn btn-block btn-lg btn-info btn-fill">
+</form>
+</div>
 {% endblock %}

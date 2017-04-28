@@ -1,26 +1,42 @@
 {% extends "base.html" %}
+{% block title %}Sign In{% endblock %}
 
 {% block body %}
-
-<h1>Login</h1>
-<form action="" method="post" name="login">
-  {{ form.hidden_tag() }}
-  <p>
-    Email:<br>
-    {{ form.email }}<br>
+{% block content %}
     {% for error in form.email.errors %}
-      <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}<br>
-    Password:<br>
-    {{ form.password }}<br>
-    {% for error in form.password.errors %}
-      <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}<br>
-  </p>
-  <p><input type="submit" value="Sign in"> </p>
+    <div class="alert alert-danger">
+      <div class="container">[{{ error }}]</div></div>
+    {% endfor %}
 
-      
-</form>
-<a href="/resetpassword"><button>Forgot Password</button></a>
+        {% for error in form.password.errors %}
+        <div class="alert alert-danger">
+          <div class="container">[{{ error }}]</div></div>
+    {% endfor %}
+    {% endblock %}
+
+    <body style="background-image: url('{{ url_for('static',filename='assets/img/butler.jpg') }}'); background-size: cover">
+<form class=action method="post" name="login" >
+      {{ form.hidden_tag() }}
+      <div class = "container text-center" style="padding-top:20%">
+        <div>
+        <h1 style="color: white; font-weight: bold;">Coffee@CU</h1>
+      </div>
+      <div class="col-md-4 col-md-offset-4  text-center">
+        {{ form.email (placeholder="Email", class="form-control", )}}<br>
+      </div>
+      <div class="col-md-4 col-md-offset-4  text-center">
+        {{ form.password (placeholder="Password", class="form-control") }}<br>
+      </div>
+        <div style="align:center width:150px margin:0 auto">
+          <div class="col-md-4 col-md-offset-4  text-center">
+
+          <button class="btn btn-block btn-lg btn-info btn-fill" type="submit" value="Sign in">Log In</button>
+          <a href="/resetpassword">Forgot Password</a>
+        </div>
+
+
+      </div>
+    </div>
+  </form></body>
 
 {% endblock %}
