@@ -16,7 +16,8 @@ def index():
         pairs = get_user_profile_pairs();
         return render_template('index.html', logged_in=True, pairs=pairs)
     else:
-        return render_template('index.html', logged_in=False)
+        return redirect(url_for('login'))
+        #return render_template('index.html', logged_in=False)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
