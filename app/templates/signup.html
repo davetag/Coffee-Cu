@@ -1,19 +1,35 @@
 {% extends "base.html" %}
 
+{% block title %}Sign In{% endblock %}
+
 {% block body %}
-
-<h1>Sign up</h1>
-{% from "_formhelpers.html" import render_field %}
-<form action="" method="post" name="signup">
-  {{ form.hidden_tag() }}
-  <dl>
-    {{ render_field(form.firstname) }}
-    {{ render_field(form.lastname) }}
-    {{ render_field(form.email) }}
-    {{ render_field(form.password) }}
-    {{ render_field(form.confirm) }}
-  </dl>
-  <p><input type="submit" value="Sign up">
-</form>
-
+<body style="background-image: url('{{ url_for('static',filename='assets/img/yule.jpg') }}'); background-size: cover">
+   <div class="space"></div>
+   <div>
+      <h1 class="col-md-4 col-md-offset-4  text-center" style="color: white; font-weight: bold;">Sign Up</h1>
+   </div>
+   <form action="" method="post" name="signup">
+      <div class = "container text-center">
+         <div class="col-md-4 col-md-offset-4  text-center">
+            {{ form.firstname (placeholder="First Name", class="form-control", )}}<br>
+         </div>
+         <div class="col-md-4 col-md-offset-4  text-center">
+            {{ form.lastname (placeholder="Last Name", class="form-control", )}}<br>
+         </div>
+         <div class="col-md-4 col-md-offset-4  text-center">
+            {{ form.email (placeholder="Email", class="form-control", )}}<br>
+         </div>
+         <div class="col-md-4 col-md-offset-4  text-center">
+            {{ form.password (placeholder="Password", class="form-control") }}<br>
+         </div>
+         <div class="col-md-4 col-md-offset-4  text-center">
+            {{ form.confirm (placeholder="Confirm password", class="form-control") }}<br>
+         </div>
+      </div>
+      </div>
+   </form>
+   <div class="col-md-4 col-md-offset-4  text-center">
+      <button class="btn btn-block btn-lg btn-info btn-fill " type="submit" value="Sign up">Sign Up</button>
+   </div>
+</body>
 {% endblock %}

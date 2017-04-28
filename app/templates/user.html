@@ -1,3 +1,4 @@
+{% extends "base.html" %}
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
@@ -19,10 +20,10 @@
 
 </style>
 </head>
-{% extends "base.html" %}
+
 
 {% block body %}
-
+<div class="container">
 <h1>{{ viewed_user['firstname'] }} {{ viewed_user['lastname'] }}</h1>
 
 <h2>{{ profile['year'] }} / {{ profile['school'] }} / {{ profile['major'] }}</h2>
@@ -48,42 +49,45 @@
   <p><strong>LinkedIn: </strong>{{ profile['linkedin'] }}</p>
   <p><strong>Website: </strong>{{ profile['website'] }}</p>
 </div>
-  
 <!-- Button trigger modal -->
-<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#messageBox">
-    Send a message
+<button class="btn btn-primary" data-toggle="modal" data-target="#messageBox">
+  Send a Message
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="messageBox" tabindex="-1" role="dialog" 
-     aria-labelledby="messageBox" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">
-                       <span aria-hidden="true">&times;</span>
-                       <span class="sr-only">Close</span>
-                </button>
-                <h4 class="modal-title" id="messageBoxTitle">
-                    Write message below
-                </h4>
-            </div>
-            
-            <!-- Modal Body -->
-            <div class="modal-body">
-                <form action="{{ url_for('user', uid = viewed_user['uid']) }}" method=post>
- 
-                      {{ form.message.label }}
-                      {{ form.message }} 
-                      {{ form.submit }}
-                                 
-                </form>
-                {% endblock %}  
-            </div>
-            
-        </div>
+<div class="modal fade" id="messageBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Send an Email</h4>
+      </div>
+      <div class="modal-body">
+        <div class="modal-body">
+            <form action="{{ url_for('user', uid = viewed_user['uid']) }}" method=post>
+
+                  {{ form.message.label }}
+                  {{ form.message(class="form-control")}}
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-simple" data-dismiss="modal">Close</button>
+        <div class="divider"></div>
+        {{ form.submit(class="btn btn-info btn-simple") }}
+
+  </form>
+      </div>
     </div>
+  </div>
 </div>
 
 
+</div>
+
+<!--    end modal -->
+                {% endblock %}
+            </div>
+
+        </div>
+    </div>
+</div>
