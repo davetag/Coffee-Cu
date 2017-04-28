@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}Edit your profile{% endblock %}
+
 {% block body %}
 <div class="container">
 <h1>Edit Profile</h1>
@@ -13,10 +15,6 @@
     {{ render_field(form.about, class="form-control") }}
     {{ render_field(form.likes, class="form-control") }}
     {{ render_field(form.contactfor, class="form-control")  }}
-    {{ render_field(form.twitter, class="form-control")  }}
-    {{ render_field(form.facebook, class="form-control")  }}
-    {{ render_field(form.linkedin, class="form-control")  }}
-    {{ render_field(form.make_public, class="switch has-switch")  }}
 
   <input type="submit" value="Update" class="btn btn-block btn-lg btn-info btn-fill">
 </form>

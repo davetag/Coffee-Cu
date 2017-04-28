@@ -14,12 +14,12 @@
     {% endfor %}
     {% endblock %}
 
-    <body style="background-image: url('{{ url_for('static',filename='assets/img/almainsnow.jpg') }}'); background-size: cover">
+    <body style="background-image: url('{{ url_for('static',filename='assets/img/butler.jpg') }}'); background-size: cover">
 <form class=action method="post" name="login" >
       {{ form.hidden_tag() }}
       <div class = "container text-center" style="padding-top:20%">
         <div>
-        <h1 style="color: #2CA8FF">Coffee@CU</h1>
+        <h1 style="color: white; font-weight: bold;">Coffee@CU</h1>
       </div>
       <div class="col-md-4 col-md-offset-4  text-center">
         {{ form.email (placeholder="Email", class="form-control", )}}<br>
