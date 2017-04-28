@@ -120,6 +120,7 @@ def user(uid):
         # get info for user to display, 404 if not found
         viewed_user = get_userdata(uid)
         profile = get_profile(uid)
+        photo_url = get_user_photo_url(uid, session['idToken'])
 
         if viewed_user is None or profile is None:
             return render_template('error/404.html', logged_in=True)
@@ -134,11 +135,9 @@ def user(uid):
                 flash('Sent message to %s!' % viewed_user['firstname'])
             else:
                 flash('Please write a message')
-        else:
-            # in all other cases, just display
-            photo_url=get_user_photo_url(uid, session['idToken'])
-            return render_template('user.html', viewed_user=viewed_user,
-                profile=profile, logged_in=True, form=form, photo_url=photo_url)
+
+        return render_template('user.html', viewed_user=viewed_user,
+            profile=profile, logged_in=True, form=form, photo_url=photo_url)
     except HTTPError:
         return render_template('error/400.html', logged_in=True)
 
