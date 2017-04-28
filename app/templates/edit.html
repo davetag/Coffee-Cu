@@ -3,7 +3,7 @@
 {% block title %}Edit your profile{% endblock %}
 
 {% block body %}
-<div class="container">
+<div class="container text-center">
 <h1>Edit Profile</h1>
 
 <strong>Your current profile picture:</strong>
@@ -15,10 +15,10 @@
 
 {% from "_formhelpers.html" import render_field %}
 
-<form action="" method="post" name="profile" enctype="multipart/form-data" class="col-md-8">
+<form action="" method="post" name="profile" enctype="multipart/form-data" class="col-md-8 text-center">
   {{ form.hidden_tag() }}
 
-    {{ render_field(form.photo, class="form-control col-md-4") }}
+    {{ render_field(form.photo, class="form-control col-md-4 text-center") }}
     {{ render_field(form.school, class="form-control col-md-4") }}
     {{ render_field(form.year, class="form-control col-md-4") }}
     {{ render_field(form.major, class="form-control") }}
