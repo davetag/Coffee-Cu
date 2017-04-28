@@ -90,7 +90,7 @@ def edit():
         # handle photo upload
         if form.photo.data:
             try:
-                set_user_photo(form.photo.data)
+                set_user_photo(session['uid'], form.photo.data)
             except TypeError:
                 flash('Profile photo upload failed.')
 
